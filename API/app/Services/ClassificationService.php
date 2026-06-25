@@ -5,11 +5,12 @@ namespace App\Services;
 use App\Models\ClassificationLog;
 use App\Models\EmailMessage;
 use App\Models\EmailThread;
-use OpenAI;
+use OpenAI\Client;
 use Illuminate\Support\Facades\Log;
 
 class ClassificationService
 {
+    public function __construct(private Client $openai) {}
     private const MODEL = 'gpt-4o-mini';
 
     // Cost per token in USD (gpt-4o-mini)
@@ -34,10 +35,9 @@ PROMPT;
             return $this->classifyStub($message);
         }
 
-        $client   = OpenAI::client(config('services.openai.api_key'));
         $bodyText = $this->prepareBody($message->body_text);
 
-        $response = $client->chat()->create([
+        $response = $this->openai->chat()->create([
             'model'    => self::MODEL,
             'messages' => [
                 ['role' => 'system', 'content' => self::SYSTEM_PROMPT],

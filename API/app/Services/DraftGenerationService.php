@@ -3,11 +3,12 @@
 namespace App\Services;
 
 use App\Models\EmailMessage;
-use OpenAI;
+use OpenAI\Client;
 use Illuminate\Support\Facades\Log;
 
 class DraftGenerationService
 {
+    public function __construct(private Client $openai) {}
     private const MODEL = 'gpt-4o-mini';
 
     private const SYSTEM_PROMPT = <<<PROMPT
@@ -25,9 +26,7 @@ PROMPT;
         }
 
         try {
-            $client = OpenAI::client(config('services.openai.api_key'));
-
-            $response = $client->chat()->create([
+            $response = $this->openai->chat()->create([
                 'model'       => self::MODEL,
                 'messages'    => [
                     ['role' => 'system', 'content' => self::SYSTEM_PROMPT],
