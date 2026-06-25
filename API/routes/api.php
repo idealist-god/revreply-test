@@ -13,4 +13,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect']);
 });
 
-Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
+// google cloud console registered
+Route::get('/auth/google/callback',  [GoogleAuthController::class,  'callback']);
