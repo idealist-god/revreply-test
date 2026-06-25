@@ -59,7 +59,17 @@ class GmailMessageService
         $client  = $this->oauthService->getAuthenticatedClient($account);
         $service = new Gmail($client);
 
-        $raw = $service->users_messages->get('me', $gmailMessageId, ['format' => 'full']);
+        try {
+            $raw = $service->users_messages->get('me', $gmailMessageId, ['format' => 'full']);
+        } catch (\Google\Service\Exception $e) {
+            if ($e->getCode() === 404) {
+                Log::info('GmailMessageService: message no longer exists, skipping', [
+                    'gmail_message_id' => $gmailMessageId,
+                ]);
+                return null;
+            }
+            throw $e;
+        }
 
         $parsed = $this->parseMessage($raw);
 

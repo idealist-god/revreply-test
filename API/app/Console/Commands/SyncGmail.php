@@ -69,11 +69,11 @@ class SyncGmail extends Command
             return $ids;
         }
 
-        // First-time sync: list recent inbox messages directly
+        // First-time sync: list all recent inbox messages
         $profile  = $gmail->users->getProfile('me');
         $response = $gmail->users_messages->listUsersMessages('me', [
             'labelIds'   => ['INBOX'],
-            'maxResults' => 20,
+            'maxResults' => 100,
         ]);
 
         $account->update(['watch_history_id' => $profile->getHistoryId()]);
