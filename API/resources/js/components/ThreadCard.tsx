@@ -12,15 +12,22 @@ function timeAgo(dateStr: string | null): string {
     return `${Math.floor(hrs / 24)}d ago`;
 }
 
-export default function ThreadCard({ thread }: { thread: Thread }) {
+export default function ThreadCard({ thread, accountEmail }: { thread: Thread; accountEmail?: string }) {
     return (
         <Link to={`/dashboard?threadId=${thread.id}`}>
             <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer">
                 <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                            {thread.from_address ?? 'Unknown sender'}
-                        </p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-sm font-medium text-gray-900 truncate">
+                                {thread.from_address ?? 'Unknown sender'}
+                            </p>
+                            {accountEmail && (
+                                <span className="shrink-0 text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
+                                    {accountEmail}
+                                </span>
+                            )}
+                        </div>
                         <p className="text-sm text-gray-700 truncate mt-0.5">
                             {thread.subject ?? '(no subject)'}
                         </p>
