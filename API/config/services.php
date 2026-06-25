@@ -35,4 +35,19 @@ return [
         ],
     ],
 
+    'google' => [
+        'client_id'     => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect_uri'  => env('GOOGLE_REDIRECT_URI'),
+        'pubsub_topic'  => env('GOOGLE_PUBSUB_TOPIC'),
+    ],
+
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+    ],
+
+    'llm' => [
+        'stub' => env('LLM_STUB', false),
+    ],
+
 ];
