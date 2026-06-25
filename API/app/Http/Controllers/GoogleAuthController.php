@@ -9,7 +9,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
-use Google\Service\Oauth2 as GoogleOauth2;
 
 class GoogleAuthController extends Controller
 {
@@ -34,13 +33,9 @@ class GoogleAuthController extends Controller
             return redirect(config('app.frontend_url') . '/dashboard?error=google_denied');
         }
 
-        $userId = Crypt::decryptString($request->get('state'));
-        $token  = $this->oauthService->exchangeCode($request->get('code'));
-
-        $client      = $this->oauthService->getAuthenticatedClientFromToken($token);
-        $oauth2      = new GoogleOauth2($client);
-        $userInfo    = $oauth2->userinfo->get();
-        $gmailAddress = $userInfo->getEmail();
+        $userId       = Crypt::decryptString($request->get('state'));
+        $token        = $this->oauthService->exchangeCode($request->get('code'));
+        $gmailAddress = $this->oauthService->getUserEmail();
 
         $account = GmailAccount::updateOrCreate(
             ['gmail_address' => $gmailAddress],
@@ -52,8 +47,15 @@ class GoogleAuthController extends Controller
             ]
         );
 
-        $this->watchService->startWatch($account);
+        try {
+            $this->watchService->startWatch($account);
+        } catch (\Throwable $e) {
+            Log::warning('GmailWatch setup failed — account connected without push notifications', [
+                'gmail_account_id' => $account->id,
+                'error'            => $e->getMessage(),
+            ]);
+        }
 
-        return redirect(config('app.frontend_url') . '/dashboard?connected=1');
+        return redirect(config('app.frontend_url', config('app.url')) . '/dashboard?connected=1');
     }
 }

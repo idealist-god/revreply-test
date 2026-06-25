@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\GmailAccount;
 use Google\Client;
+use Google\Service\Gmail;
 use Illuminate\Support\Facades\Log;
 
 class GoogleOAuthService
@@ -54,6 +55,12 @@ class GoogleOAuthService
         }
 
         return $token;
+    }
+
+    public function getUserEmail(): string
+    {
+        $gmail = new Gmail($this->client);
+        return $gmail->users->getProfile('me')->getEmailAddress();
     }
 
     public function getAuthenticatedClient(GmailAccount $account): Client
