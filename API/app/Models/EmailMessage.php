@@ -37,4 +37,9 @@ class EmailMessage extends Model
     {
         return $this->hasMany(DraftReply::class);
     }
+
+    public function classificationLogs(): HasMany
+    {
+        return $this->hasMany(ClassificationLog::class);
+    }
 }
