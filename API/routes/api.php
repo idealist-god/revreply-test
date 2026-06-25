@@ -1,14 +1,15 @@
 <?php
 
 use App\Http\Controllers\GoogleAuthController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::post('/auth/register', [UserController::class, 'register']);
+Route::post('/auth/login',    [UserController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/auth/logout',        [UserController::class, 'logout']);
+    Route::get('/auth/me',             [UserController::class, 'me']);
     Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect']);
 });
 
