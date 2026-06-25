@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\GmailWebhookController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,3 +16,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // google cloud console registered
 Route::get('/auth/google/callback',  [GoogleAuthController::class,  'callback']);
+Route::post('/gmail/webhook',        [GmailWebhookController::class, 'handle']);
