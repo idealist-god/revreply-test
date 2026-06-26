@@ -43,11 +43,13 @@ return [
     ],
 
     'openai' => [
-        'api_key' => env('OPENAI_API_KEY'),
+        'api_key'  => env('OPENAI_API_KEY'),
+        'base_url' => env('OPENAI_BASE_URL', 'https://api.openai.com/v1'),
     ],
 
     'llm' => [
-        'stub' => env('LLM_STUB', false),
+        'stub'  => env('LLM_STUB', false),
+        'model' => env('LLM_MODEL', 'gpt-4o-mini'),
     ],
 
 ];

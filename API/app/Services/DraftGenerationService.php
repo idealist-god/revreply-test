@@ -8,8 +8,12 @@ use Illuminate\Support\Facades\Log;
 
 class DraftGenerationService
 {
-    public function __construct(private Client $openai) {}
-    private const MODEL = 'gpt-4o-mini';
+    private string $model;
+
+    public function __construct(private Client $openai)
+    {
+        $this->model = config('services.llm.model', 'gpt-4o-mini');
+    }
 
     private const SYSTEM_PROMPT = <<<PROMPT
 You are a professional sales assistant writing email replies on behalf of a sales representative.
@@ -27,7 +31,7 @@ PROMPT;
 
         try {
             $response = $this->openai->chat()->create([
-                'model'       => self::MODEL,
+                'model'       => $this->model,
                 'messages'    => [
                     ['role' => 'system', 'content' => self::SYSTEM_PROMPT],
                     ['role' => 'user',   'content' => $this->buildPrompt($message, $classification)],

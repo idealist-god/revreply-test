@@ -10,8 +10,12 @@ use Illuminate\Support\Facades\Log;
 
 class ClassificationService
 {
-    public function __construct(private Client $openai) {}
-    private const MODEL = 'gpt-4o-mini';
+    private string $model;
+
+    public function __construct(private Client $openai)
+    {
+        $this->model = config('services.llm.model', 'gpt-4o-mini');
+    }
 
     // Cost per token in USD (gpt-4o-mini)
     private const COST_PER_INPUT_TOKEN  = 0.00000015;
@@ -38,7 +42,7 @@ PROMPT;
         $bodyText = $this->prepareBody($message->body_text);
 
         $response = $this->openai->chat()->create([
-            'model'    => self::MODEL,
+            'model'    => $this->model,
             'messages' => [
                 ['role' => 'system', 'content' => self::SYSTEM_PROMPT],
                 ['role' => 'user',   'content' => "Classify this email:\n\n{$bodyText}"],
@@ -61,7 +65,7 @@ PROMPT;
             'classification'    => $classification,
             'confidence'        => $confidence,
             'llm_provider'      => 'openai',
-            'model'             => self::MODEL,
+            'model'             => $this->model,
             'prompt_tokens'     => $promptTokens,
             'completion_tokens' => $completionTokens,
             'cost_usd'          => ($promptTokens * self::COST_PER_INPUT_TOKEN)
